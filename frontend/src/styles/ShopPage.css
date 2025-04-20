@@ -1,0 +1,179 @@
+/* 1. Make every ancestor full‑screen */
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+/* 2. ShopPage container as a column flex‑box */
+.shop-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  width: 100%;
+  padding: 10px;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+
+/* Header */
+.shop-header {
+  flex: 0 0 auto;        /* do not grow/shrink */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #132f61;
+  padding: 15px 30px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 20px;
+}
+
+.shop-header h1 {
+  font-size: 1.8rem;
+  color: #ffffff;
+  margin: 10px;
+}
+
+.shop-header nav {
+  display: flex;
+  gap: 1rem;
+}
+
+.shop-header button {
+  background-color: #ff0000;
+  color: #fff;
+  border: none;
+  padding: 0 15px;
+  height: 40px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.shop-header button:hover {
+  background-color: #d60e0e;
+}
+
+.shop-header button.logout:hover {
+  background-color: #d32f2f;
+}
+
+/* Section title */
+.shop-page h2 {
+  margin: 0 0 20px;
+  font-size: 1.5rem;
+  color: #000000;
+}
+
+/* 3. Main content grows to fill remaining height */
+.products-grid {
+  display: grid;
+  /* each column at least 250px, but never more than 3 columns */
+  grid-template-columns: repeat(3, minmax(250px, 1fr));
+  gap: 20px;
+  flex: 1 1 auto;
+  overflow-y: auto;
+}
+
+
+
+/* Product card */
+.product-card {
+  position: relative;
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  text-align: center;
+  transition: transform 0.2s ease-in-out;
+}
+
+
+/* Image */
+.product-card .product-image {
+  width: 250px;
+  max-width: 220px;
+  height: 300px;
+  object-fit:fill;
+  border-radius: 8px;
+}
+
+/* Text */
+.product-card h3 {
+  margin: 10px 0 5px;
+  font-size: 1.1rem;
+  color: #333;
+}
+.product-card .price {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 8px 0;
+  color: #1f2937;
+}
+.product-card .discount {
+  color: #16a34a;
+  font-weight: 800;
+}
+.product-card .availability {
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+  font-weight: 800;
+}
+.product-card .availability.in-stock {
+  color: #22c55e;
+}
+.product-card .availability.out-of-stock {
+  color: #ef4444;
+}
+
+/* Actions group */
+.product-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 10px;
+}
+.product-card .buy-now,
+.product-card .add-to-cart {
+  padding: 5px 20px;
+
+  height: 45px;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.product-card .buy-now {
+  background-color: #ff0000;
+  color: #fff;
+}
+.product-card .buy-now:hover {
+  background-color: #d00202;
+}
+.product-card .add-to-cart {
+  background-color: #ff0000;
+  color: #fff;
+}
+.product-card .add-to-cart:hover {
+  background-color: #d00202;
+}
+
+/* Wishlist icon inline as button */
+.product-card .wishlist-icon-inline {
+  padding: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.product-card .wishlist-icon-inline:hover {
+  transform: scale(1.2);
+}

@@ -1,0 +1,110 @@
+/* Navbar Styling */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background: transparent;
+    font-size: 18px;
+    font-weight: bold;         
+}
+
+.navbar h1 {
+    margin: 0;
+    font-size: 22px;
+    color: #333;
+}
+
+.nav-links {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #555;
+    font-size: 16px;
+}
+
+.logout-btn {
+    padding: 5px 15px;
+    background: #ff5c5c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.logout-btn:hover {
+    background: #e53e3e;
+}
+
+/* Fixes White Space Issue */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden; /* Prevents extra scrolling */
+    overflow-y: auto; /* Enables vertical scrolling */
+}
+
+/* Map Container Styling */
+.map {
+    position: absolute;
+    top: 50px; /* Adjusted to prevent navbar overlap */
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: calc(100vh - 50px); /* Full height minus navbar */
+    width: 100%;
+}
+
+.map-container {
+    height: 80vh; /* Adjust as needed */
+    overflow-y: auto;
+    overflow-x: hidden;
+    border: 1px solid #ccc; /* Optional: adds a border */
+    scrollbar-width: thin; /* For Firefox */
+    scrollbar-color: #888 #f1f1f1; /* Customize scrollbar color */
+}
+
+/* For WebKit browsers like Chrome and Edge */
+.map-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.map-container::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 4px;
+}
+
+.map-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Fix Zoom Button Overlapping */
+.leaflet-top {
+    margin-top: 20px; /* Pushes zoom buttons below navbar */
+}
+
+.custom-popup {
+    max-width: 180px;
+    white-space: nowrap;
+    padding: 5px; 
+}
+.leaflet-popup-content-wrapper {
+    border-radius: 8px;
+    padding: 5px;
+}
+.leaflet-popup-content {
+    margin: 0;
+    padding: 5px; /* Reduce padding */
+    font-size: 14px; /* Slightly smaller text */
+}
+.leaflet-popup-tip {
+    display: none; /* Hide default popup tip */
+}
+ 
+  
+  
