@@ -61,8 +61,10 @@ const ShopPage = () => {
               <p className="price">₹{product.price}</p>
               <p className="discount">{product.discount}% OFF</p>
               <p className={`availability ${product.available ? 'in-stock' : 'out-of-stock'}`}>
-                {product.available ? 'In Stock' : 'Out of Stock'}
+                     {product.availability? 'In Stock' : 'Out of Stock'}
               </p>
+
+
               <div className="product-actions">
                 <button className="buy-now">Buy Now</button>
                 <button className="add-to-cart">Add to Cart</button>

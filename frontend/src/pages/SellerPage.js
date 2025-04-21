@@ -73,6 +73,7 @@ const [editProductData, setEditProductData] = useState({ availability: true, dis
       alert('Failed to add product');
     }
   };
+  
 
   const handleDeleteProduct = async (productId) => {
     try {
@@ -84,12 +85,12 @@ const [editProductData, setEditProductData] = useState({ availability: true, dis
       alert('Failed to delete product');
     }
   };
+  
   const handleUpdateProduct = async (updatedProduct) => {
+    console.log("Updated Product Data:", updatedProduct); // Log the entire product data
+    console.log("Product ID:", updatedProduct._id); // Log the ID explicitly
     try {
-      const response = await axios.put(
-        `http://localhost:5000/api/products/${updatedProduct._id}`,
-        updatedProduct
-      );
+      const response = await axios.put(`http://localhost:5000/api/products/${updatedProduct._id}`, updatedProduct);
       setProducts((prev) =>
         prev.map((p) => (p._id === updatedProduct._id ? response.data.product : p))
       );
@@ -99,6 +100,7 @@ const [editProductData, setEditProductData] = useState({ availability: true, dis
       alert('Failed to update product');
     }
   };
+  
   
   
   return (
