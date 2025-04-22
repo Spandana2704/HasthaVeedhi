@@ -1,3 +1,4 @@
+
 /* General Reset */
 * {
   margin: 0;
@@ -66,44 +67,25 @@ select:focus {
   box-shadow: 0 0 5px rgba(108, 92, 237, 0.4);
 }
 
-/* Submit Button (Login/Register) */
-.submit-btn {
-  width: 100%;
-  padding: 1rem;  
-  margin-top: 0.5rem;    
-  background-color: #ffffff;
-  color: rgb(255, 255, 255);
-  font-weight: bold;
-  cursor: pointer;
-  padding: 1rem;
-  margin-top: 1rem;
-  border: none;
-  border-radius: 6px;
-  font-size: 18px;
-  transition: background-color 0.3s ease;
+
+/* Smooth click effect for buttons */
+.submit-btn:active,
+.toggle-btn:active {
+  transform: scale(0.96);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) inset;
+  transition: transform 0.1s ease-in-out;
 }
 
 .submit-btn:hover {
-  background-color: #5e4bdb;
-}
-
-/* Toggle Button (Don't have an account?) */
-.toggle-btn {
-  background-color: transparent;
-  border: none;
-  color: #ffffff;
-  font-size: 20px;
-  font-weight: 600;
-  cursor: pointer;
-  margin-top: 1rem;
-  transition: color 0.3s ease;
+  background: linear-gradient(135deg, #2a5298, #1e3c72); /* reverse gradient */
+  transform: scale(1.05);
+  box-shadow: 0 8px 16px rgba(30, 60, 114, 0.5);
 }
 
 .toggle-btn:hover {
   text-decoration: underline;
-  
+  color: #1e3c72;
 }
-
 /* Error or Status Message */
 p {
   font-size: 14px;

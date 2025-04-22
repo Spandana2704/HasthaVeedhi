@@ -94,12 +94,20 @@ const AuthPage = () => {
             <option value="seller">Seller</option>
           </select>
         )}
-        <button type="submit">{isRegister ? 'Register' : 'Login'}</button>
+
+        {/* Bootstrap Primary Button */}
+        <button type="submit" className="btn btn-primary submit-btn">
+          {isRegister ? 'Register' : 'Login'}
+        </button>
       </form>
 
       <p>{message}</p>
 
-      <button onClick={() => setIsRegister(!isRegister)} className="toggle-btn">
+      {/* Toggle with Bootstrap Outline Button */}
+      <button
+        onClick={() => setIsRegister(!isRegister)}
+        className="btn btn-outline-primary toggle-btn"
+      >
         {isRegister ? 'Already have an account? Login' : 'Don’t have an account? Register'}
       </button>
     </div>
