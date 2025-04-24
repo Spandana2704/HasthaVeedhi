@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../styles/SellerPage.css';
+import { useNavigate } from 'react-router-dom';
+
 
 const craftNames = [
   "Ajrakh Block Printing", "Apatani Weaving", "Aranmula Kannadi", "Bandhani",
@@ -13,7 +15,9 @@ const craftNames = [
   "Risa and Rignai Weaving", "Shell Craft", "Tanjore Paintings", "Terracotta Craft", "Thangka Paintings",
   "Uppada Jamdani Sarees", "Venkatagiri Sarees", "Warli Painting"
 ];
+
 const SellerDashboard = () => {
+  const navigate = useNavigate();
   const [newProduct, setNewProduct] = useState({
     name: '',
     price: '',
@@ -25,223 +29,431 @@ const SellerDashboard = () => {
   const [products, setProducts] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
   const [editProductId, setEditProductId] = useState(null);
-const [editProductData, setEditProductData] = useState({ availability: true, discount: 0 });
+  const [editProductData, setEditProductData] = useState({ 
+    availability: true, 
+    discount: 0 
+  });
 
+  // Safe product fetching with error handling
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchProducts = async () => {
       try {
-        const productsResponse = await axios.get('http://localhost:5000/api/products');
-        setProducts(productsResponse.data);
-      } catch (err) {
-        console.error(err);
+        const token = localStorage.getItem('token');
+        if (!token) {
+          console.error('No authentication token found');
+          return;
+        }
+
+        const response = await axios.get(
+          'http://localhost:5000/api/products/my-products',
+          {
+            headers: { Authorization: `Bearer ${token}` },
+            timeout: 5000
+          }
+        );
+
+        const safeProducts = (response.data?.products || []).map(product => ({
+          _id: product?._id || `temp-${Math.random().toString(36).substr(2, 9)}`,
+          name: product?.name || 'Unnamed Product',
+          price: product?.price || 0,
+          craft: product?.craft || 'Unknown Craft',
+          imageUrl: product?.imageUrl || '',
+          availability: Boolean(product?.availability),
+          discount: Math.max(0, Math.min(100, product?.discount || 0))
+        })).filter(Boolean);
+
+        setProducts(safeProducts);
+      } catch (error) {
+        console.error('Product fetch error:', error);
+        alert('Failed to load products. Please try again later.');
       }
     };
-    fetchData();
+
+    fetchProducts();
   }, []);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setNewProduct({ ...newProduct, [name]: value });
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('role');
+    navigate('/auth', { replace: true });  // Proper React Router navigation
   };
 
+  // Image upload handler with error handling
   const handleImageChange = async (e) => {
-    const file = e.target.files[0];
-    if (file) {
+    try {
+      const file = e.target.files[0];
+      if (!file) return;
+  
+      // Add file size validation (recommended)
+      if (file.size > 5 * 1024 * 1024) { // 5MB limit
+        alert('File size too large (max 5MB)');
+        return;
+      }
+  
       const formData = new FormData();
       formData.append('image', file);
-
-      try {
-        const response = await axios.post('http://localhost:5000/api/upload/image', formData);
-        const imageUrl = response.data.imageUrl;
-        setNewProduct((prev) => ({ ...prev, imageUrl }));
-      } catch (err) {
-        console.error('Image upload failed:', err);
+  
+      const response = await axios.post(
+        'http://localhost:5000/api/products/upload',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          },
+          timeout: 10000 // Add timeout
+        }
+      );
+  
+      // Verify response structure
+      if (!response.data?.imageUrl) {
+        throw new Error('Invalid response from server');
       }
+  
+      setNewProduct(prev => ({
+        ...prev,
+        imageUrl: response.data.imageUrl 
+      }));
+    } catch (error) {
+      console.error('Image upload failed:', error);
+      alert(error.message || 'Image upload failed. Please try again.');
+      // Reset file input on error
+      e.target.value = '';
     }
   };
 
+  // Product submission handler
   const handleAddProduct = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/api/products/add', newProduct);
-      setProducts([...products, response.data.product]);
-      alert('Product added successfully!');
-      setNewProduct({ name: '', price: '', craft: '', availability: true, imageUrl: '' });
+      const token = localStorage.getItem('token');
+      if (!token) throw new Error('Authentication required');
+  
+      // Add frontend validation
+      if (!newProduct.imageUrl) {
+        throw new Error('Please upload an image first');
+      }
+  
+      const productToAdd = {
+        ...newProduct,
+        price: Math.max(0, parseFloat(newProduct.price) || 0), // Prevent negative prices
+        craft: newProduct.craft.trim(),
+        availability: Boolean(newProduct.availability)
+      };
+  
+      const response = await axios.post(
+        'http://localhost:5000/api/products/add',
+        productToAdd,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          timeout: 5000 // Add timeout
+        }
+      );
+  
+      // Verify successful response
+      if (!response.data?.product?._id) {
+        throw new Error('Failed to get product ID from response');
+      }
+  
+      setProducts(prev => [...prev, response.data.product]);
+      
+      setNewProduct({
+        name: '',
+        price: '',
+        craft: '',
+        availability: true,
+        imageUrl: ''
+      });
+      
       setShowAddForm(false);
-    } catch (err) {
-      console.error(err);
-      alert('Failed to add product');
+      alert('Product added successfully!');
+    } catch (error) {
+      console.error('Add product error:', error);
+      const errorMessage = error.response?.data?.message || 
+                          error.message || 
+                          'Failed to add product';
+      alert(errorMessage);
     }
   };
-  
 
+  // Product deletion handler
   const handleDeleteProduct = async (productId) => {
+    if (!window.confirm('Are you sure you want to delete this product?')) return;
+
     try {
-      await axios.delete(`http://localhost:5000/api/products/${productId}`);
-      setProducts(products.filter(product => product._id !== productId));
-      alert('Product deleted successfully!');
-    } catch (err) {
-      console.error('Error deleting product:', err);
+      await axios.delete(`http://localhost:5000/api/products/${productId}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      setProducts(prev => prev.filter(p => p._id !== productId));
+      alert('Product deleted successfully');
+    } catch (error) {
+      console.error('Delete error:', error);
       alert('Failed to delete product');
     }
   };
-  
-  const handleUpdateProduct = async (updatedProduct) => {
-    console.log("Updated Product Data:", updatedProduct); // Log the entire product data
-    console.log("Product ID:", updatedProduct._id); // Log the ID explicitly
+
+  // Product update handler
+  const handleUpdateProduct = async (productId, updates) => {
     try {
-      const response = await axios.put(`http://localhost:5000/api/products/${updatedProduct._id}`, updatedProduct);
-      setProducts((prev) =>
-        prev.map((p) => (p._id === updatedProduct._id ? response.data.product : p))
+      const response = await axios.put(
+        `http://localhost:5000/api/products/${productId}`,
+        updates,
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        }
       );
-      alert('Product updated successfully!');
-    } catch (err) {
-      console.error('Error updating product:', err);
+
+      setProducts(prev => prev.map(p => 
+        p._id === productId ? { ...p, ...response.data.product } : p
+      ));
+      setEditProductId(null);
+      alert('Product updated successfully');
+    } catch (error) {
+      console.error('Update error:', error);
       alert('Failed to update product');
     }
   };
-  
-  
-  
+
   return (
-    <div className="dashboard-container">
+    <div className="seller-dashboard">
       <div className="dashboard-header">
-        <h2>Seller Dashboard</h2>
-        <button onClick={() => setShowAddForm(true)}>Add to Products</button>
+        <h1>Seller Dashboard</h1>
+        <div className="header-actions">
+        <button 
+          className="add-product-btn"
+          onClick={() => setShowAddForm(true)}
+          aria-label="Add new product"
+        >
+          Add Product +
+        </button>
+        <button 
+            className="logout-btn"
+            onClick={handleLogout}
+            aria-label="Logout"
+          >
+            Logout
+        </button>
       </div>
-      <div className="dashboard-content">
-      <h3>Existing Products</h3>
-      {products.length === 0 ? (
-        <p>No products added yet.</p>
-      ) : (
-        <div className="product-list">
-          {products.map((product) => (
-            <div key={product._id} className="product-card">
-              {product.imageUrl ? (
-                <img src={product.imageUrl} alt={product.name} />
-              ) : (
-                <p>No image available</p>
-              )}
-              <div>
-                <h4>{product.name}</h4>
-                <p>{product.craft}</p>
-                <p>{`Price: ₹${product.price}`}</p>
-              {/* Availability Toggle */}
-      <label>
-      {editProductId === product._id ? (
-  <>
-    <label>
-      Availability:
-      <select
-        value={editProductData.availability}
-        onChange={(e) =>
-          setEditProductData((prev) => ({
-            ...prev,
-            availability: e.target.value === 'true'
-          }))
-        }
-      >
-        <option value="true">Available</option>
-        <option value="false">Out of Stock</option>
-      </select>
-    </label>
-
-    <label>
-      Discount (%):
-      <input
-        type="number"
-        value={editProductData.discount}
-        min="0"
-        max="100"
-        onChange={(e) =>
-          setEditProductData((prev) => ({
-            ...prev,
-            discount: parseInt(e.target.value)
-          }))
-        }
-      />
-    </label>
-
-    <button
-      onClick={() => {
-        handleUpdateProduct({ ...product, ...editProductData });
-        setEditProductId(null);
-      }}
-    >
-      Save
-    </button>
-    <button onClick={() => setEditProductId(null)}>Cancel</button>
-  </>
-) : (
-  <>
-    <p>Availability: {product.availability ? 'Available' : 'Out of Stock'}</p>
-    <p>Discount: {product.discount || 0}%</p>
-    <button
-      onClick={() => {
-        setEditProductId(product._id);
-        setEditProductData({
-          availability: product.availability,
-          discount: product.discount || 0
-        });
-      }}
-    >
-      Edit
-    </button>
-  </>
-)}
-</label>
-                <button onClick={() => handleDeleteProduct(product._id)}>Delete</button>
-              </div>
-            </div>
-            
-          ))}
+      </div>
+      <div className="products-container">
+        <h2>Existing Products ({products.length})</h2>
         
-        </div>
-      )}
+        {products.length === 0 ? (
+          <div className="empty-state">
+            <p style={{ color: 'red' }}>No products found. Start by adding your first product!</p>
+          </div>
+        ) : (
+          <div className="products-grid">
+            {products.map((product) => (
+              <div key={product._id} className="product-card">
+                <div className="product-image">
+                  {product.imageUrl ? (
+                    <img 
+                    src={`http://localhost:5000${product.imageUrl}`}
+                    alt={product.name}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = `${process.env.PUBLIC_URL}/fallback-image.jpg`;
+                    }}
+                    />
+                  ) : (
+                    <div className="image-placeholder">
+                      <span>No Image Available</span>
+                    </div>
+                  )}
+                </div>
+                
+                <div className="product-details">
+                  <h3>{product.name || 'Unnamed Product'}</h3>
+                  <p className="craft-type">{product.craft || 'Unknown Craft'}</p>
+                  <p className="price">
+                    ₹{(product.price || 0).toLocaleString('en-IN')}
+                    {product.discount > 0 && (
+                      <span className="discount-badge">
+                        {product.discount}% OFF
+                      </span>
+                    )}
+                  </p>
+
+                  {editProductId === product._id ? (
+                    <div className="edit-form">
+                      <label>
+                        Availability:
+                        <select
+                          value={editProductData.availability.toString()}
+                          onChange={e => setEditProductData(prev => ({
+                            ...prev,
+                            availability: e.target.value === 'true'
+                          }))}
+                        >
+                          <option value="true">Available</option>
+                          <option value="false">Out of Stock</option>
+                        </select>
+                      </label>
+                      
+                      <label>
+                        Discount (%):
+                        <input
+                          type="number"
+                          min="0"
+                          max="100"
+                          value={editProductData.discount}
+                          onChange={e => setEditProductData(prev => ({
+                            ...prev,
+                            discount: Math.max(0, Math.min(100, Number(e.target.value)))
+                          }))}
+                        />
+                      </label>
+
+                      <div className="edit-actions">
+                        <button
+                          className="save-btn"
+                          onClick={() => handleUpdateProduct(product._id, {
+                            availability: editProductData.availability,
+                            discount: editProductData.discount
+                          })}
+                        >
+                          Save
+                        </button>
+                        <button
+                          className="cancel-btn"
+                          onClick={() => setEditProductId(null)}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <p className={`availability ${product.availability ? 'in-stock' : 'out-of-stock'}`}>
+                        {product.availability ? 'In Stock' : 'Out of Stock'}
+                      </p>
+                      <div className="product-actions">
+                        <button
+                          className="edit-btn"
+                          onClick={() => {
+                            setEditProductId(product._id);
+                            setEditProductData({
+                              availability: product.availability,
+                              discount: product.discount || 0
+                            });
+                          }}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className="delete-btn"
+                          onClick={() => handleDeleteProduct(product._id)}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
+
       {showAddForm && (
         <div className="modal-overlay">
-          <div className="modal">
-            <button className="close-btn" onClick={() => setShowAddForm(false)}>×</button>
-            <form className="product-form" onSubmit={handleAddProduct}>
-              <h3>Add a New Product</h3>
-              <input
-                type="text"
-                name="name"
-                placeholder="Product Name"
-                value={newProduct.name}
-                onChange={handleInputChange}
-                required
-              />
-              <input
-                type="text"
-                name="price"
-                placeholder="Price"
-                value={newProduct.price}
-                onChange={handleInputChange}
-                required
-              />
-              <select
-                name="craft"
-                value={newProduct.craft}
-                onChange={handleInputChange}
-                required
-              >
-                <option value="">Select Craft</option>
-                {craftNames.map((craft, index) => (
-                  <option key={index} value={craft}>
-                    {craft}
-                  </option>
-                ))}
-              </select>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                required
-              />
-              {newProduct.imageUrl && <img src={newProduct.imageUrl} alt="Preview" />}
-              <button type="submit">Add Product</button>
+          <div className="add-product-modal">
+            <button 
+              className="close-modal"
+              onClick={() => setShowAddForm(false)}
+              aria-label="Close modal"
+            >
+              &times;
+            </button>
+            
+            <h2>Add New Product</h2>
+            
+            <form onSubmit={handleAddProduct}>
+              <div className="form-group">
+                <label>Product Name *</label>
+                <input
+                  type="text"
+                  value={newProduct.name}
+                  onChange={e => setNewProduct(prev => ({
+                    ...prev,
+                    name: e.target.value
+                  }))}
+                  required
+                  minLength="2"
+                  maxLength="100"
+                />
+              </div>
+              
+              <div className="form-group">
+                <label>Price (₹) *</label>
+                <input
+                  type="number"
+                  value={newProduct.price}
+                  onChange={e => setNewProduct(prev => ({
+                    ...prev,
+                    price: e.target.value
+                  }))}
+                  required
+                  min="0"
+                  step="0.01"
+                />
+              </div>
+              
+              <div className="form-group">
+                <label>Craft Type *</label>
+                <select
+                  value={newProduct.craft}
+                  onChange={e => setNewProduct(prev => ({
+                    ...prev,
+                    craft: e.target.value
+                  }))}
+                  required
+                >
+                  <option value="">Select Craft Type</option>
+                  {craftNames.map((craft, index) => (
+                    <option key={index} value={craft}>
+                      {craft}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              
+            <div className="form-group">
+              <label htmlFor="product-image">Product Image *</label>
+              <div className="file-input-container">
+                <label className="file-input-label">
+                📁 <span>Click to upload or drag and drop</span>
+                  <span>Click to upload or drag and drop</span>
+                
+                <input
+                  type="file"
+                  id="product-image"
+                  onChange={handleImageChange}
+                  accept="image/*"
+                  required
+                />
+                </label>
+              </div>
+                {newProduct.imageUrl && (
+                  <div className="image-preview-container">
+                  <img 
+                    src={newProduct.imageUrl} 
+                    alt="Preview" 
+                    className="image-preview"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = `${process.env.PUBLIC_URL}/fallback-image.jpg`;
+                    }}
+                  />
+                  </div>
+                )}
+              </div>
+              
+              <button type="submit" className="submit-btn">
+                Add Product
+              </button>
             </form>
           </div>
         </div>

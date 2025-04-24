@@ -6,8 +6,6 @@ import Dashboard from './pages/Dashboard';
 import ArtisanMarketMap from './pages/MapPage';
 import SellerDashboard from './pages/SellerPage';
 import ShopPage from "./pages/ShopPage";
-import WishlistPage from "./pages/Wishlist";
-import CartPage from "./pages/MyCart";
 
 const App = () => {
   return (
@@ -18,8 +16,6 @@ const App = () => {
       <Route path="/seller-dashboard" element={<SellerDashboard />} />
       <Route path="/shop" element={<ShopPage />} />
       <Route path="/map" element={<ArtisanMarketMap />} />
-      <Route path="/wishlist" element={<WishlistPage />} />
-      <Route path="/cart" element={<CartPage />} />
       <Route path="/auth" element={<AuthPage />} />
     </Routes>
   );
