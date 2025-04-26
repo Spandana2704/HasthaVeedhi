@@ -267,16 +267,54 @@ const SellerDashboard = () => {
                   <h3>{product.name || 'Unnamed Product'}</h3>
                   <p className="craft-type">{product.craft || 'Unknown Craft'}</p>
                   <p className="price">
-                    ₹{(product.price || 0).toLocaleString('en-IN')}
-                    {product.discount > 0 && (
-                      <span className="discount-badge">
-                        {product.discount}% OFF
-                      </span>
-                    )}
-                  </p>
+  {product.discount > 0 ? (
+    <>
+      <span className="original-price">
+        ₹{(product.price || 0).toLocaleString('en-IN')}
+      </span>
+      <span className="discounted-price">
+      {'\u20B9'}{((product.price || 0) * (1 - (product.discount/100))).toLocaleString('en-IN')}
+      </span>
+      <span className="discount-badge">
+        {product.discount}% OFF
+      </span>
+    </>
+  ) : (
+    <span>
+    {'\u20B9'}{(product.price || 0).toLocaleString('en-IN')}
+    </span>
+  )}
+</p>
 
                   {editProductId === product._id ? (
                     <div className="edit-form">
+ <label>
+    Product Name:
+    <input
+      type="text"
+      value={editProductData.name || product.name}
+      onChange={e => setEditProductData(prev => ({
+        ...prev,
+        name: e.target.value
+      }))}
+      required
+    />
+  </label>
+  
+  <label>
+    Price (₹):
+    <input
+      type="number"
+      value={editProductData.price || product.price}
+      onChange={e => setEditProductData(prev => ({
+        ...prev,
+        price: e.target.value
+      }))}
+      min="0"
+      step="0.01"
+      required
+    />
+  </label>
                       <label>
                         Availability:
                         <select
@@ -309,6 +347,8 @@ const SellerDashboard = () => {
                         <button
                           className="save-btn"
                           onClick={() => handleUpdateProduct(product._id, {
+                            name: editProductData.name || product.name,
+                            price: editProductData.price || product.price,
                             availability: editProductData.availability,
                             discount: editProductData.discount
                           })}
@@ -425,7 +465,6 @@ const SellerDashboard = () => {
               <div className="file-input-container">
                 <label className="file-input-label">
                 📁 <span>Click to upload or drag and drop</span>
-                  <span>Click to upload or drag and drop</span>
                 
                 <input
                   type="file"

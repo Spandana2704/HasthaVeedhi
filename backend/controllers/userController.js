@@ -1,25 +1,51 @@
+//controllers/userController
+
 const User = require('../models/User'); // ✅ Correct
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const JWT_SECRET = process.env.JWT_SECRET;
+const emailController = require('./emailController');
 
 exports.register = async (req, res) => {
-  const { username, phone, email, password, role } = req.body;
-
   try {
+    const { username, phone, email, password, role } = req.body;
+    
+    // Check if user exists
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+      return res.status(400).json({ error: 'Email already in use' });
+    }
+
+    // Create user
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({
+    
+    // Generate verification token
+    const verificationToken = jwt.sign(
+      { email },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+
+    const user = await User.create({ 
       username,
       phone,
+      email, 
+      password: hashedPassword, 
+      role,
+      verificationToken
+    });
+    
+    // Send verification email
+    await emailController.sendVerification(req, res, {
       email,
-      password: hashedPassword,
-      role
+      verificationToken
     });
 
-    await newUser.save();
-    res.status(201).json({ message: 'Registration successful' });
-  } catch (err) {
-    res.status(400).json({ message: err.message });
+  } catch (error) {
+    if (error.code === 11000) { // MongoDB duplicate key error
+      return res.status(400).json({ error: 'Email already in use' });
+    }
+    res.status(500).json({ error: error.message });
   }
 };
 

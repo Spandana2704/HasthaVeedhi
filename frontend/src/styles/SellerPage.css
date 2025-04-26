@@ -83,6 +83,7 @@
   flex-direction: column;
   height: 100%;
   position: relative; /* For discount positioning */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .product-card:hover {
