@@ -88,4 +88,8 @@ router.put('/:id', protect, productController.updateProduct);
 // GET: Get seller products (protected)
 router.get('/seller', protect, productController.getSellerProducts);
 
+router.post('/wishlist/add', protect, productController.addToWishlist);
+router.post('/wishlist/remove', protect, productController.removeFromWishlist);
+router.get('/wishlist', protect, productController.getWishlist);
+
 module.exports = router;

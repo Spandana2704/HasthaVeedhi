@@ -7,6 +7,8 @@ import ArtisanMarketMap from './pages/MapPage';
 import SellerDashboard from './pages/SellerPage';
 import ShopPage from "./pages/ShopPage";
 import EmailVerificationPage from "./pages/EmailVerificationPage";
+import Wishlist from "./pages/Wishlist";
+
 const App = () => {
   return (
     <Routes>
@@ -18,6 +20,7 @@ const App = () => {
       <Route path="/shop" element={<ShopPage />} />
       <Route path="/map" element={<ArtisanMarketMap />} />
       <Route path="/auth" element={<AuthPage />} />
+      <Route path="/wishlist" element={<Wishlist />} />
     </Routes>
   );
 };

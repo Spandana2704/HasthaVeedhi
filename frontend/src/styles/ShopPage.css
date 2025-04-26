@@ -18,6 +18,16 @@ html, body, #root {
   font-family: 'Segoe UI', sans-serif;
 }
 
+.error-message {
+  color: red;
+  padding: 10px;
+  background-color: #ffeeee;
+  border: 1px solid #ffcccc;
+  border-radius: 4px;
+  margin: 10px 0;
+  text-align: center;
+}
+
 
 /* Header */
 .shop-header {
@@ -152,18 +162,18 @@ html, body, #root {
   transition: background-color 0.3s;
 }
 .product-card .buy-now {
-  background-color: #ff0000;
+  background-color: #30aa36;
   color: #fff;
 }
 .product-card .buy-now:hover {
-  background-color: #d00202;
+  background-color: #019214;
 }
 .product-card .add-to-cart {
-  background-color: #ff0000;
+  background-color: #ff7d04;
   color: #fff;
 }
 .product-card .add-to-cart:hover {
-  background-color: #d00202;
+  background-color: #d85707;
 }
 
 /* Wishlist icon inline as button */
@@ -225,3 +235,11 @@ html, body, #root {
   object-fit: cover;
   border-radius: 4px;
 }
+
+/* Back button styles */
+.wishlist-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
