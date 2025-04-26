@@ -1,5 +1,3 @@
-//routes/product.s
-
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
@@ -38,22 +36,56 @@ router.post('/upload', upload.single('image'), async (req, res) => {
   }
 });
 
-
-// GET: Get products by craft
-router.get('/my-products', protect, async (req, res) => {
+// GET: Get all products (public access)
+router.get('/', async (req, res) => {
   try {
-    const products = await Product.find({ sellerId: req.user.id });
-    res.status(200).json({ success: true, products }); // <- consistent format
+    const products = await Product.find({});
+    res.status(200).json(products);
   } catch (err) {
-    res.status(500).json({ success: false, message: 'Failed to fetch products' });
+    res.status(500).json({ 
+      success: false,
+      message: 'Failed to fetch products',
+      error: err.message 
+    });
   }
 });
 
-// DELETE: Delete a product by ID
+// GET: Get products by craft type (public access)
+router.get('/craft/:craftType', async (req, res) => {
+  try {
+    const products = await Product.find({ 
+      craft: req.params.craftType 
+    });
+    res.status(200).json(products);
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch products by craft',
+      error: err.message
+    });
+  }
+});
+
+// GET: Get seller's products (protected)
+router.get('/my-products', protect, async (req, res) => {
+  try {
+    const products = await Product.find({ sellerId: req.user.id });
+    res.status(200).json({ success: true, products });
+  } catch (err) {
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to fetch products' 
+    });
+  }
+});
+
+// DELETE: Delete a product by ID (protected)
 router.delete('/:id', protect, productController.deleteProduct);
 
+// PUT: Update a product (protected)
 router.put('/:id', protect, productController.updateProduct);
 
+// GET: Get seller products (protected)
 router.get('/seller', protect, productController.getSellerProducts);
 
 module.exports = router;
