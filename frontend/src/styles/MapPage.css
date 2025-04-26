@@ -1,43 +1,81 @@
-/* Navbar Styling */
+/* Responsive Navbar Styling with Buttons Moved Up */
 .navbar {
+    background-color: transparent;
+    color: #3d3d3d;
+    padding: 15px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 20px;
-    background: transparent;
-    font-size: 18px;
-    font-weight: bold;         
+    border-bottom: 1px solid transparent;
+    box-shadow: none;
+    position: relative;
+    z-index: 1000;
+}
+
+.navbar::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    opacity: 1;
+    z-index: -1;
+    border-radius: 0;
 }
 
 .navbar h1 {
     margin: 0;
-    font-size: 22px;
-    color: #333;
+    font-size: 26px;
+    font-weight: 700;
+    color: #b8860b;
 }
 
 .nav-links {
     display: flex;
-    gap: 20px;
+    gap: 10px;
     align-items: center;
+    margin-top: -5px; /* Adjust this value to move buttons up */
 }
 
 .nav-links a {
     text-decoration: none;
-    color: #555;
-    font-size: 16px;
+    color: white;
+    font-size: 17px;
+    font-weight: 500;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+    padding: 8px 16px;
+    border-radius: 5px;
+    background-color: #007bff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-links a:hover {
+    background-color: #0056b3;
+    color: white;
 }
 
 .logout-btn {
-    padding: 5px 15px;
-    background: #ff5c5c;
+    background-color: #e4572e;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    transition: background-color 0.2s ease-in-out;
+    padding: 8px 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: -5px; /* Adjust this value to move buttons up */
 }
 
 .logout-btn:hover {
-    background: #e53e3e;
+    background-color: #cc4e28;
 }
 
 /* Fixes White Space Issue */
@@ -45,31 +83,29 @@ html, body {
     margin: 0;
     padding: 0;
     height: 100%;
-    overflow: hidden; /* Prevents extra scrolling */
-    overflow-y: auto; /* Enables vertical scrolling */
+    overflow: hidden;
+    overflow-y: auto;
 }
 
 /* Map Container Styling */
 .map {
     position: absolute;
-    top: 50px; /* Adjusted to prevent navbar overlap */
+    top: 60px;
     left: 0;
     right: 0;
     bottom: 0;
-    height: calc(100vh - 50px); /* Full height minus navbar */
     width: 100%;
 }
 
 .map-container {
-    height: 80vh; /* Adjust as needed */
+    height: 80vh;
     overflow-y: auto;
     overflow-x: hidden;
-    border: 1px solid #ccc; /* Optional: adds a border */
-    scrollbar-width: thin; /* For Firefox */
-    scrollbar-color: #888 #f1f1f1; /* Customize scrollbar color */
+    border: 1px solid #ccc;
+    scrollbar-width: thin;
+    scrollbar-color: #888 #f1f1f1;
 }
 
-/* For WebKit browsers like Chrome and Edge */
 .map-container::-webkit-scrollbar {
     width: 8px;
 }
@@ -83,28 +119,136 @@ html, body {
     background: #555;
 }
 
-/* Fix Zoom Button Overlapping */
 .leaflet-top {
-    margin-top: 20px; /* Pushes zoom buttons below navbar */
+    margin-top: 65px;
 }
 
 .custom-popup {
     max-width: 180px;
     white-space: nowrap;
-    padding: 5px; 
+    padding: 8px;
 }
+
 .leaflet-popup-content-wrapper {
-    border-radius: 8px;
-    padding: 5px;
+    border-radius: 6px;
+    padding: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
+
 .leaflet-popup-content {
     margin: 0;
-    padding: 5px; /* Reduce padding */
-    font-size: 14px; /* Slightly smaller text */
+    padding: 8px 0;
+    font-size: 14px;
+    text-align: center;
 }
+
+.leaflet-popup-content b {
+    font-size: 16px;
+    font-weight: 500;
+    color: #222222;
+}
+
+.leaflet-popup-content span {
+    color: #777777;
+}
+
 .leaflet-popup-tip {
-    display: none; /* Hide default popup tip */
+    display: none;
 }
- 
-  
-  
+
+/* Responsive Design Adjustments */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 10px 15px;
+    }
+
+    .navbar h1 {
+        margin-bottom: 10px;
+        font-size: 22px;
+    }
+
+    .nav-links {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        width: 100%;
+         margin-top: 0; /* Reset for stacked layout */
+    }
+
+    .nav-links a {
+        display: block;
+        padding: 10px 0;
+        width: 100%;
+        box-sizing: border-box;
+        text-align: center;
+    }
+
+    .logout-btn {
+        width: 100%;
+        box-sizing: border-box;
+        margin-left: 0;
+        text-align: center;
+         margin-top: 0; /* Reset for stacked layout */
+    }
+
+    .map {
+        top: auto;
+        bottom: 0;
+        height: calc(100vh - 120px);
+    }
+
+    .leaflet-top {
+        top: auto;
+        bottom: 10px;
+        margin-top: 0;
+        left: 10px;
+    }
+    .nav-links a{
+        background-color: #007bff;
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar h1 {
+        font-size: 20px;
+    }
+
+    .nav-links a {
+        font-size: 15px;
+         padding: 8px 16px;
+    }
+
+    .logout-btn {
+        font-size: 15px;
+         padding: 8px 16px;
+    }
+
+    .map {
+        height: calc(100vh - 150px);
+    }
+}
+
+/* For very wide screens (e.g., large desktops) */
+@media (min-width: 1920px) {
+    .navbar {
+        padding: 20px 30px;
+    }
+
+    .nav-links {
+        gap: 30px;
+    }
+
+    .navbar h1{
+        font-size: 28px;
+    }
+    .nav-links a {
+        font-size: 18px;
+         padding: 10px 18px;
+    }
+    .logout-btn{
+        font-size: 18px;
+         padding: 10px 18px;
+    }
+}
