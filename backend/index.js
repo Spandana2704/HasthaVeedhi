@@ -5,6 +5,8 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/db');
 const productRoutes = require('./routes/products');
+const cartRoutes = require('./routes/cartRoutes');
+// const checkoutRoutes = require('./routes/checkoutRoutes');
 const PORT = process.env.PORT || 5000;
 const path = require('path');
 const app = express();
@@ -33,6 +35,8 @@ app.use(express.json());
 // 3. Route configurations
 app.use('/auth', require('./routes/auth'));
 app.use('/api/products', productRoutes);
+app.use('/api/cart', cartRoutes);
+// app.use('/api/checkout', checkoutRoutes);
 
 // 4. Static file serving (FIXED)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));

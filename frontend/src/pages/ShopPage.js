@@ -91,6 +91,72 @@ const ShopPage = () => {
       console.error('Error updating wishlist:', error);
     }
   };
+  // Add this function to your ShopPage component
+  const handleAddToCart = async (productId) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        navigate('/auth');
+        return;
+      }
+  
+      // Debugging logs
+      console.log('Attempting to add product to cart:', productId);
+      
+      const response = await fetch('http://localhost:5000/api/cart/add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ productId })
+      });
+  
+      // Debugging the raw response
+      const responseText = await response.text();
+      console.log('Raw server response:', responseText);
+  
+      if (!response.ok) {
+        // Try to parse error message
+        let errorMessage = 'Failed to add to cart';
+        try {
+          const errorData = JSON.parse(responseText);
+          errorMessage = errorData.message || errorMessage;
+        } catch (e) {
+          errorMessage = responseText || errorMessage;
+        }
+        throw new Error(errorMessage);
+      }
+  
+      // Success case
+      const responseData = responseText ? JSON.parse(responseText) : {};
+      console.log('Product added to cart:', responseData);
+      
+      // Optional: Update local state or trigger refresh
+      // fetchCartItems(); // Uncomment if you want to refresh cart immediately
+      
+      // User feedback
+      alert('Product added to cart successfully!');
+      
+    } catch (error) {
+      console.error('Cart operation failed:', {
+        error: error.message,
+        stack: error.stack
+      });
+      
+      // More user-friendly error messages
+      const userMessage = error.message.includes('token')
+        ? 'Please login to add items to cart'
+        : error.message.includes('network')
+        ? 'Network error - please check your connection'
+        : 'Failed to add item to cart';
+        
+      alert(userMessage);
+    }
+  };;
+
+
+
 
 
   return (
@@ -159,7 +225,12 @@ const ShopPage = () => {
 
                 <div className="product-actions">
                   <button className="buy-now">Buy Now</button>
-                  <button className="add-to-cart">Add to Cart</button>
+                  <button 
+                     className="add-to-cart" 
+                      onClick={() => handleAddToCart(product._id)}
+                                     >
+                          Add to Cart
+                  </button>
                   <FaHeart
                     className="wishlist-icon-inline"
                     color={wishlist.includes(product._id) ? 'red' : 'gray'}
