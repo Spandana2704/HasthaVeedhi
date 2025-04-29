@@ -61,23 +61,22 @@ const AuthPage = () => {
   const handleResendCode = async () => {
     setMessage('Sending new verification email...');
     try {
-      const response = await fetch('/auth/send-verification', {
+      const response = await fetch('/auth/resend-verification', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email: form.email }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: form.email })
       });
+  
+      const result = await response.json();
       
       if (response.ok) {
-        setMessage('New verification email sent! Please check your inbox.');
+        setMessage(result.message);
         startResendTimer();
       } else {
-        const result = await response.json();
-        setMessage(result.error || 'Failed to resend verification email');
+        setMessage(result.error || 'Failed to resend verification');
       }
     } catch (err) {
-      setMessage('Failed to resend verification email');
+      setMessage('Failed to connect to server');
     }
   };
 
@@ -85,56 +84,65 @@ const AuthPage = () => {
     try {
       const passwordValidation = validatePassword(form.password);
       if (!passwordValidation.isValid) {
-        setMessage('Password must be at least 8 characters and include uppercase, lowercase, a number, and a special character.');
+        setMessage('Password must meet all requirements');
         return;
       }
   
       const response = await fetch('/auth/register', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(form),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form)
       });
   
       const result = await response.json();
       
       if (response.ok) {
         setIsEmailSent(true);
-        setMessage('Verification email sent! Please check your inbox and click the verification link to complete registration.');
+        setMessage(result.message);
         startResendTimer();
       } else {
-        setMessage(result.error || 'Failed to send verification email');
+        setMessage(result.error || 'Registration failed');
       }
     } catch (err) {
-      setMessage(err.message || 'Failed to send verification email');
+      setMessage('Failed to connect to server');
     }
   };
-
+  
+  // Update the login handler to handle unverified users
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       if (isRegister) {
         await handleSendVerificationCode();
       } else {
-        const data = await login(form);
-        sessionStorage.setItem('loggedIn', 'true');
-        sessionStorage.setItem('role', data.role);
-        sessionStorage.setItem('user', JSON.stringify(data));
-        setMessage(`Logged in as ${data.role}`);
-
-        if (data.role === 'customer') {
-          navigate('/customer-map');
-        } else if (data.role === 'seller') {
-          navigate('/seller-dashboard');
+        const response = await fetch('/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: form.email, password: form.password })
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+          // Handle successful login
+          sessionStorage.setItem('loggedIn', 'true');
+          sessionStorage.setItem('role', result.role);
+          sessionStorage.setItem('user', JSON.stringify(result));
+          navigate(result.role === 'customer' ? '/customer-map' : '/seller-dashboard');
+        } else if (response.status === 403 && result.isVerified === false) {
+          // Handle unverified user
+          setIsEmailSent(true);
+          setMessage(result.message);
         } else {
-          navigate('/dashboard');
+          setMessage(result.message || 'Login failed');
         }
       }
     } catch (err) {
-      setMessage(err.message || (isRegister ? 'Registration failed' : 'Login failed'));
+      setMessage('Network error. Please try again.');
     }
   };
+
+
 
   const passwordValidation = validatePassword(form.password);
 

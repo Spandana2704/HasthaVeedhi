@@ -1,128 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useCart } from '../contexts/CartContext';
 import '../styles/CartPage.css';
 
 const CartPage = () => {
-  const [cartItems, setCartItems] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const { 
+    cartItems, 
+    updateQuantity, 
+    removeFromCart,
+    loading,
+    error
+  } = useCart();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchCartItems = async () => {
-        try {
-          setLoading(true);
-          setError(null);
-          
-          const token = localStorage.getItem('token');
-          if (!token) {
-            navigate('/auth');
-            return;
-          }
-      
-          console.log('Fetching cart items...');
-          
-          const response = await fetch('http://localhost:5000/api/cart', {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          });
-      
-          const responseText = await response.text();
-          console.log('Raw cart response:', responseText);
-      
-          if (!response.ok) {
-            let errorMessage = 'Failed to load cart';
-            try {
-              const errorData = JSON.parse(responseText);
-              errorMessage = errorData.message || errorMessage;
-            } catch (e) {
-              errorMessage = responseText || errorMessage;
-            }
-            throw new Error(errorMessage);
-          }
-      
-          const cartData = responseText ? JSON.parse(responseText) : [];
-          console.log('Cart items loaded:', cartData);
-          
-          setCartItems(Array.isArray(cartData) ? cartData : []);
-          
-        } catch (error) {
-          console.error('Cart fetch error:', {
-            error: error.message,
-            stack: error.stack
-          });
-          
-          setError(error.message);
-          
-          // Auto-retry for network errors
-          if (error.message.includes('network') || error.message.includes('Failed to fetch')) {
-            console.log('Retrying cart fetch...');
-            setTimeout(fetchCartItems, 2000);
-          }
-        } finally {
-          setLoading(false);
-        }
-      };
-
-    fetchCartItems();
-  }, [navigate]);
-
-  const updateQuantity = async (productId, newQuantity) => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/cart/update', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ productId, quantity: newQuantity })
-      });
-
-      if (!response.ok) throw new Error('Failed to update quantity');
-      
-      // Refresh cart items
-      const updatedResponse = await fetch('http://localhost:5000/api/cart', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      const updatedData = await updatedResponse.json();
-      setCartItems(updatedData);
-    } catch (error) {
-      console.error('Error updating quantity:', error);
-      alert(error.message);
-    }
-  };
-
-  const removeItem = async (productId) => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/cart/remove', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ productId })
-      });
-
-      if (!response.ok) throw new Error('Failed to remove item');
-      
-      // Refresh cart items
-      const updatedResponse = await fetch('http://localhost:5000/api/cart', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      const updatedData = await updatedResponse.json();
-      setCartItems(updatedData);
-    } catch (error) {
-      console.error('Error removing item:', error);
-      alert(error.message);
-    }
-  };
 
   const calculateTotal = () => {
     return cartItems.reduce((total, item) => {
@@ -131,14 +20,23 @@ const CartPage = () => {
     }, 0).toFixed(2);
   };
 
+  const handleCheckout = () => {
+    if (cartItems.length === 0) {
+      alert('Your cart is empty');
+      return;
+    }
+    navigate('/checkout');
+  };
+
   return (
     <div className="cart-page">
       <header className="cart-header">
         <h1>CraftShop</h1>
         <nav>
+          <button onClick={() => navigate(-1)} className="back-button"> &larr; Back </button>
           <button onClick={() => navigate('/map')}>Home</button>
           <button onClick={() => navigate('/wishlist')}>Wishlist</button>
-          <button onClick={() => navigate('/shop')}>Shop</button>
+          <button onClick={() => navigate('/orders')}>My Orders</button>
           <button onClick={() => navigate('/auth')} className="logout">Logout</button>
         </nav>
       </header>
@@ -211,7 +109,7 @@ const CartPage = () => {
 
                       <button 
                         className="remove-item"
-                        onClick={() => removeItem(product._id)}
+                        onClick={() => removeFromCart(product._id)}
                       >
                         Remove
                       </button>
@@ -237,7 +135,7 @@ const CartPage = () => {
               </div>
               <button 
                 className="checkout-button"
-                onClick={() => navigate('/checkout')}
+                onClick={handleCheckout}
               >
                 Proceed to Checkout
               </button>
@@ -246,7 +144,7 @@ const CartPage = () => {
         ) : (
           <div className="empty-cart">
             <p>Your cart is empty</p>
-            <button onClick={() => navigate('/shop')}>Continue Shopping</button>
+            <button onClick={() => navigate('/map')}>Explore Crafts</button>
           </div>
         )}
       </div>

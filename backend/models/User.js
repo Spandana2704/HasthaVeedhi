@@ -16,7 +16,8 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   role: { type: String, enum: ['customer', 'seller'], default: 'customer' },
   isVerified: { type: Boolean, default: false },
-  verificationToken: { type: String }
+  verificationToken: { type: String },
+  verificationSentAt: { type: Date }
 },{ timestamps: true });
 
 module.exports = mongoose.model('User', userSchema);

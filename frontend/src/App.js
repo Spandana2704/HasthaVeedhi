@@ -1,6 +1,7 @@
 // src/App.js
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
+import { CartProvider } from './contexts/CartContext';
 import AuthPage from './pages/AuthPage';
 import Dashboard from './pages/Dashboard';
 import ArtisanMarketMap from './pages/MapPage';
@@ -9,12 +10,15 @@ import ShopPage from "./pages/ShopPage";
 import EmailVerificationPage from "./pages/EmailVerificationPage";
 import Wishlist from "./pages/Wishlist";
 import CartPage from './pages/CartPage';
-// import CheckoutPage from './pages/CheckoutPage';
-// import OrderConfirmation from './pages/OrderConfirmation';
+import CheckoutPage from './pages/CheckoutPage';
+import OrderConfirmation from './pages/OrderConfirmation';
+import OrderHistoryPage from './pages/OrderHistoryPage';
+import OrderDetailsPage from './pages/OrderDetailsPage';
 
 
 const App = () => {
   return (
+    <CartProvider>
     <Routes>
       <Route path="/" element={<AuthPage />} />
       <Route path="/verify-email" element={<EmailVerificationPage />} />
@@ -26,9 +30,12 @@ const App = () => {
       <Route path="/auth" element={<AuthPage />} />
       <Route path="/wishlist" element={<Wishlist />} />
       <Route path="/cart" element={<CartPage />} />
-      {/* <Route path="/checkout" element={<CheckoutPage />} /> */}
-      {/* <Route path="/order-confirmation" element={<OrderConfirmation />} />       */}
+      <Route path="/checkout" element={<CheckoutPage />} />
+      <Route path="/order-confirmation" element={<OrderConfirmation />} />
+      <Route path="/orders" element={<OrderHistoryPage />} />
+      <Route path="/orders/:id" element={<OrderDetailsPage />} />
     </Routes>
+    </CartProvider>
   );
 };
 

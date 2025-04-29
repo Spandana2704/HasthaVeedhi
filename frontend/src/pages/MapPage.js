@@ -105,7 +105,8 @@ const ArtisanMarketMap = () => {
                 <Link to="/map">Home</Link>
                 <Link to="/about">About</Link>
                 <Link to="/wishlist">Wishlist</Link>
-                <Link to="/cart">MyCart</Link>
+                <Link to="/cart">My Cart</Link>
+                <Link to="/orders">My Orders</Link>
                     <button className="logout-btn" onClick={handleLogout}>Logout</button>
                 </div>
             </nav>

@@ -24,6 +24,8 @@ const SellerDashboard = () => {
     craft: '',
     availability: true,
     imageUrl: '',
+    description: '',
+    sellerContact: ''
   });
 
   const [products, setProducts] = useState([]);
@@ -31,7 +33,9 @@ const SellerDashboard = () => {
   const [editProductId, setEditProductId] = useState(null);
   const [editProductData, setEditProductData] = useState({ 
     availability: true, 
-    discount: 0 
+    discount: 0,
+    description: '',
+    sellerContact: ''
   });
 
   // Safe product fetching with error handling

@@ -70,6 +70,75 @@ const WishlistPage = () => {
       </div>
     );
   }
+ 
+  const handleAddToCart = async (productId) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        navigate('/auth');
+        return;
+      }
+  
+      const product = wishlistProducts.find(p => p._id === productId);
+      
+      if (!product.availability) {
+        alert('This product is out of stock and cannot be added to cart');
+        return;
+      }
+  
+      const response = await fetch('http://localhost:5000/api/cart/add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ productId })
+      });
+  
+      if (!response.ok) throw new Error('Failed to add to cart');
+      
+      alert('Product added to cart!');
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      alert(error.message);
+    }
+  };
+  
+  const handleBuyNow = async (productId) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Please login to proceed with checkout');
+        navigate('/auth');
+        return;
+      }
+  
+      // Find the product in wishlist
+      const product = wishlistProducts.find(p => p._id === productId);
+      
+      if (!product) {
+        alert('Product not found in your wishlist');
+        return;
+      }
+  
+      // Check availability
+      if (!product.availability) {
+        alert('This product is currently out of stock and cannot be purchased');
+        return;
+      }
+  
+      // Proceed to checkout if product is available
+      navigate('/checkout', { 
+        state: { 
+          directProduct: product,
+          quantity: 1 
+        } 
+      });
+    } catch (error) {
+      console.error('Buy Now error:', error);
+      alert(`Error: ${error.message}`);
+    }
+  };
 
   return (
     <div className="shop-page">
@@ -80,7 +149,7 @@ const WishlistPage = () => {
             <FaArrowLeft /> Back
           </button>
           <button onClick={() => navigate('/map')}>Home</button>
-          <button onClick={() => navigate('/shop')}>ShopPage</button>
+          <button onClick={() => navigate('/orders')}>My Orders</button>
           <button onClick={() => navigate('/cart')}>My Cart</button>
           <button onClick={() => navigate('/auth')} className="logout">Logout</button>
         </nav>
@@ -133,8 +202,13 @@ const WishlistPage = () => {
                 </p>
 
                 <div className="product-actions">
-                  <button className="buy-now">Buy Now</button>
-                  <button className="add-to-cart">Add to Cart</button>
+                <button className="buy-now" onClick={() => {console.log('Buy Now clicked for:', product._id); handleBuyNow(product._id);}} disabled={!product.availability} > Buy Now </button>
+                  <button 
+                     className="add-to-cart" 
+                      onClick={() => handleAddToCart(product._id)}
+                                     >
+                          Add to Cart
+                  </button>
                   <FaHeart
                     className="wishlist-icon-inline"
                     color="red"

@@ -1,0 +1,200 @@
+.order-details-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .back-button {
+    background: none;
+    border: none;
+    color: #6d28d9;
+    font-size: 16px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .back-button:hover {
+    text-decoration: underline;
+  }
+  
+  .order-header {
+    margin-bottom: 30px;
+  }
+  
+  .order-header h2 {
+    color: #6d28d9;
+    margin-bottom: 5px;
+  }
+  
+  .order-meta {
+    display: flex;
+    gap: 15px;
+    color: #666;
+  }
+  
+  .order-sections {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+  }
+  
+  .order-section {
+    margin-bottom: 30px;
+  }
+  
+  .order-section h3 {
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    color: #6d28d9;
+  }
+  
+  .order-items {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .order-item {
+    display: flex;
+    gap: 15px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .order-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  
+  .item-image {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid #eee;
+  }
+  
+  .item-details {
+    flex: 1;
+  }
+  
+  .item-details h4 {
+    margin-bottom: 5px;
+  }
+  
+  .item-craft {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+  
+  .item-price {
+    margin-bottom: 5px;
+  }
+  
+  .original-price {
+    text-decoration: line-through;
+    color: #666;
+    margin-right: 8px;
+  }
+  
+  .discounted-price {
+    font-weight: 500;
+    color: #dc2626;
+    margin-right: 8px;
+  }
+  
+  .discount-badge {
+    background: #dc2626;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+  
+  .item-quantity,
+  .item-total {
+    font-size: 14px;
+  }
+  
+  .shipping-info,
+  .payment-info {
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 6px;
+  }
+  
+  .shipping-info p,
+  .payment-info p {
+    margin: 8px 0;
+  }
+  
+  .payment-status {
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-left: 5px;
+  }
+  
+  .payment-status.completed {
+    background-color: #dcfce7;
+    color: #166534;
+  }
+  
+  .payment-status.pending {
+    background-color: #fef3c7;
+    color: #92400e;
+  }
+  
+  .payment-status.refunded {
+    background-color: #e0f2fe;
+    color: #075985;
+  }
+  
+  .order-summary {
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 6px;
+  }
+  
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  
+  .grand-total {
+    font-weight: 600;
+    font-size: 18px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed #ddd;
+  }
+  
+  .order-actions {
+    margin-top: 30px;
+    text-align: right;
+  }
+  
+  .cancel-order-btn {
+    padding: 10px 20px;
+    background-color: #fff;
+    border: 1px solid #dc2626;
+    color: #dc2626;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .cancel-order-btn:hover {
+    background-color: #fee2e2;
+  }
+  
+  .cancel-order-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }

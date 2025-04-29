@@ -1,0 +1,106 @@
+.tracking-stepper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem 0;
+  position: relative;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+  flex: 1;
+}
+
+.step-indicator {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0f0f0;
+  border: 3px solid #e0e0e0;
+  transition: all 0.3s ease;
+}
+
+.step.active .step-indicator {
+  background-color: #3498db;
+  border-color: #2980b9;
+  color: white;
+}
+
+.step-icon {
+  font-size: 1.2rem;
+}
+
+.step-label {
+  margin-top: 0.5rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #777;
+  font-weight: 500;
+}
+
+.step.active .step-label {
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.step-connector {
+  height: 3px;
+  background-color: #e0e0e0;
+  flex: 1;
+  margin: 0 -1rem;
+  position: relative;
+  top: 1.5rem;
+}
+
+.step-connector.active {
+  background-color: #3498db;
+}
+
+/* Animation for active step */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.step.active .step-indicator {
+  animation: pulse 1.5s infinite;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .tracking-stepper {
+    flex-direction: column;
+    align-items: flex-start;
+    padding-left: 1rem;
+  }
+
+  .step {
+    flex-direction: row;
+    margin-bottom: 1rem;
+    width: 100%;
+    align-items: center;
+  }
+
+  .step-indicator {
+    width: 2.5rem;
+    height: 2.5rem;
+    margin-right: 1rem;
+  }
+
+  .step-label {
+    margin-top: 0;
+    text-align: left;
+  }
+
+  .step-connector {
+    display: none;
+  }
+}

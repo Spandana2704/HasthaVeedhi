@@ -1,0 +1,75 @@
+.cod-confirmation {
+    padding: 2rem;
+    background: white;
+    border-radius: 8px;
+    max-width: 500px;
+    margin: 0 auto;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .cod-confirmation h3 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+  }
+  
+  .cod-amount {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+  }
+  
+  .cod-amount span:last-child {
+    font-weight: 600;
+    color: #27ae60;
+  }
+  
+  .cod-instructions {
+    margin-bottom: 2rem;
+    line-height: 1.6;
+    color: #555;
+  }
+  
+  .cod-instructions p {
+    margin-bottom: 0.5rem;
+  }
+  
+  .cod-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  
+  .cod-actions button {
+    flex: 1;
+    padding: 0.75rem;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .cod-actions button:first-child {
+    background: #f5f5f5;
+    border: 1px solid #ddd;
+    color: #333;
+  }
+  
+  .cod-actions button:first-child:hover {
+    background: #e0e0e0;
+  }
+  
+  .cod-actions button:last-child {
+    background: #27ae60;
+    border: 1px solid #219653;
+    color: white;
+  }
+  
+  .cod-actions button:last-child:hover {
+    background: #219653;
+  }

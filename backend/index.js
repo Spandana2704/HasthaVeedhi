@@ -36,10 +36,11 @@ app.use(express.json());
 app.use('/auth', require('./routes/auth'));
 app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
-// app.use('/api/checkout', checkoutRoutes);
+app.use('/api/orders', require('./routes/orderRoutes'));
 
 // 4. Static file serving (FIXED)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 
 // 5. Remove redundant route configurations
 // Remove these lines:
