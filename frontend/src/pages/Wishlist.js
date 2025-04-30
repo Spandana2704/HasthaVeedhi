@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaHeart, FaArrowLeft } from 'react-icons/fa';
+import { authFetch } from '../services/api';
 import '../styles/ShopPage.css';
 
 const WishlistPage = () => {
@@ -15,11 +16,7 @@ const WishlistPage = () => {
         setLoading(true);
         setError(null);
         
-        const response = await fetch('http://localhost:5000/api/products/wishlist', {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        });
+        const response = await authFetch('/api/products/wishlist');
         
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -40,11 +37,10 @@ const WishlistPage = () => {
 
   const toggleWishlist = async (productId) => {
     try {
-      const response = await fetch('http://localhost:5000/api/products/wishlist/remove', {
+      const response = await authFetch('/api/products/wishlist/remove', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({ productId })
       });
@@ -54,31 +50,12 @@ const WishlistPage = () => {
       }
     } catch (error) {
       console.error('Error removing from wishlist:', error);
+      setError(error.message);
     }
   };
 
-  if (loading) {
-    return <div className="loading">Loading wishlist...</div>;
-  }
-
-  if (error) {
-    return (
-      <div className="error">
-        <h2>Error Loading Wishlist</h2>
-        <p>{error}</p>
-        <button onClick={() => window.location.reload()}>Try Again</button>
-      </div>
-    );
-  }
- 
   const handleAddToCart = async (productId) => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        navigate('/auth');
-        return;
-      }
-  
       const product = wishlistProducts.find(p => p._id === productId);
       
       if (!product.availability) {
@@ -86,11 +63,10 @@ const WishlistPage = () => {
         return;
       }
   
-      const response = await fetch('http://localhost:5000/api/cart/add', {
+      const response = await authFetch('/api/cart/add', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({ productId })
       });
@@ -100,19 +76,12 @@ const WishlistPage = () => {
       alert('Product added to cart!');
     } catch (error) {
       console.error('Error adding to cart:', error);
-      alert(error.message);
+      setError(error.message);
     }
   };
   
   const handleBuyNow = async (productId) => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        alert('Please login to proceed with checkout');
-        navigate('/auth');
-        return;
-      }
-  
       // Find the product in wishlist
       const product = wishlistProducts.find(p => p._id === productId);
       
@@ -136,9 +105,23 @@ const WishlistPage = () => {
       });
     } catch (error) {
       console.error('Buy Now error:', error);
-      alert(`Error: ${error.message}`);
+      setError(error.message);
     }
   };
+
+  if (loading) {
+    return <div className="loading">Loading wishlist...</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="error">
+        <h2>Error Loading Wishlist</h2>
+        <p>{error}</p>
+        <button onClick={() => window.location.reload()}>Try Again</button>
+      </div>
+    );
+  }
 
   return (
     <div className="shop-page">
@@ -202,12 +185,19 @@ const WishlistPage = () => {
                 </p>
 
                 <div className="product-actions">
-                <button className="buy-now" onClick={() => {console.log('Buy Now clicked for:', product._id); handleBuyNow(product._id);}} disabled={!product.availability} > Buy Now </button>
                   <button 
-                     className="add-to-cart" 
-                      onClick={() => handleAddToCart(product._id)}
-                                     >
-                          Add to Cart
+                    className="buy-now" 
+                    onClick={() => handleBuyNow(product._id)} 
+                    disabled={!product.availability}
+                  >
+                    Buy Now
+                  </button>
+                  <button 
+                    className="add-to-cart" 
+                    onClick={() => handleAddToCart(product._id)}
+                    disabled={!product.availability}
+                  >
+                    Add to Cart
                   </button>
                   <FaHeart
                     className="wishlist-icon-inline"

@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
-
+import { authFetch } from '../services/api';
 const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
@@ -100,15 +100,12 @@ export const CartProvider = ({ children }) => {
         return;
       }
 
-      // For logged-in users, sync with server
-      const response = await fetch('http://localhost:5000/api/cart/add', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ productId, quantity })
-      });
+      // Replace fetch calls with authFetch
+const response = await authFetch('/api/cart', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ productId, quantity })
+});
 
       if (!response.ok) {
         throw new Error('Failed to add to cart');

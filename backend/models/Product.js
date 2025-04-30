@@ -67,10 +67,6 @@ enum: {
     required: [true, 'Seller ID is required'],
     index: true
   },
-  sellerContact: {
-    type: String,
-    required: true
-  },
   createdAt: {
     type: Date,
     default: Date.now

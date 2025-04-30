@@ -108,41 +108,22 @@ const AuthPage = () => {
     }
   };
   
-  // Update the login handler to handle unverified users
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       if (isRegister) {
         await handleSendVerificationCode();
       } else {
-        const response = await fetch('/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: form.email, password: form.password })
-        });
+        // Use the api.js login function instead of direct fetch
+        const result = await login({ email: form.email, password: form.password });
         
-        const result = await response.json();
-        
-        if (response.ok) {
-          // Handle successful login
-          sessionStorage.setItem('loggedIn', 'true');
-          sessionStorage.setItem('role', result.role);
-          sessionStorage.setItem('user', JSON.stringify(result));
-          navigate(result.role === 'customer' ? '/customer-map' : '/seller-dashboard');
-        } else if (response.status === 403 && result.isVerified === false) {
-          // Handle unverified user
-          setIsEmailSent(true);
-          setMessage(result.message);
-        } else {
-          setMessage(result.message || 'Login failed');
-        }
+        sessionStorage.setItem('loggedIn', 'true');
+        navigate(result.role === 'customer' ? '/customer-map' : '/seller-dashboard');
       }
-    } catch (err) {
-      setMessage('Network error. Please try again.');
+    } catch (error) {
+      setMessage(error.message || 'Login failed');
     }
   };
-
-
 
   const passwordValidation = validatePassword(form.password);
 
