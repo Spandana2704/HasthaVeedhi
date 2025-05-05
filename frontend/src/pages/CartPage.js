@@ -61,10 +61,7 @@ const CartPage = () => {
                 
                 return (
                   <div key={product._id} className="cart-item">
-                    <img
-                      src={product.imageUrl ? 
-                        `http://localhost:5000${product.imageUrl}` : 
-                        '/fallback-image.jpg'}
+                    <img src={`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}${product.imageUrl}`} 
                       alt={product.name}
                       className="cart-item-image"
                     />

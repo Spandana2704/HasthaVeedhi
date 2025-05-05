@@ -253,13 +253,16 @@ const SellerDashboard = () => {
                 <div className="product-image">
                   {product.imageUrl ? (
                     <img 
-                    src={`http://localhost:5000${product.imageUrl}`}
+                    src={product.imageUrl.startsWith('http') ? 
+                      product.imageUrl : 
+                      `http://localhost:5000${product.imageUrl}`
+                    }
                     alt={product.name}
                     onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = `${process.env.PUBLIC_URL}/fallback-image.jpg`;
+                      e.target.onerror = null; 
+                      e.target.src = '/fallback-image.jpg';
                     }}
-                    />
+                  />
                   ) : (
                     <div className="image-placeholder">
                       <span>No Image Available</span>

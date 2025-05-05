@@ -34,7 +34,7 @@ imageUrl: {
   required: [true, 'Image URL is required'],
   validate: {
     validator: function(v) {
-      return /^(https?|ftp|^\/uploads)/.test(v); // Allow relative paths
+      return /^(https?:\/\/|^\/uploads\/)/.test(v); // Allow relative paths
     },
     message: props => `${props.value} is not a valid URL or local path!`
   }
@@ -82,7 +82,5 @@ productSchema.pre('save', function(next) {
   this.updatedAt = Date.now();
   next();
 });
-
-
 
 module.exports = mongoose.model('Product', productSchema);

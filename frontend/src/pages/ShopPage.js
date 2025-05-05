@@ -199,16 +199,17 @@ const ShopPage = () => {
             const discountedPrice = product.price * (1 - (product.discount/100));
             return (
               <div key={product._id} className="product-card">
-                <img
-                  src={product.imageUrl ? 
-                    `http://localhost:5000${product.imageUrl}` : 
-                    '/fallback-image.jpg'}
-                  alt={product.name || "Product"}
-                  className="product-image"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = '/fallback-image.jpg';
-                  }}
+                  <img 
+  src={product.imageUrl.startsWith('http') ? 
+    product.imageUrl : 
+    `http://localhost:5000${product.imageUrl}`
+  }
+  alt={product.name}
+  onError={(e) => {
+    e.target.onerror = null; 
+    e.target.src = '/fallback-image.jpg';
+  }}
+
                   onClick={() => setSelectedProduct(product)}
                 />
                 <h3>{product.name || 'Unnamed Product'}</h3>

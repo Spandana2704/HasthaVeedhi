@@ -1,16 +1,27 @@
 //backend/index.js
 
-const express = require('express');
 const dotenv = require('dotenv');
+const path = require('path');
+const envPath = path.resolve(__dirname, '.env');
+require('dotenv').config({ path: envPath });
+
+console.log('ENV Path:', envPath);
+console.log('File Exists:', require('fs').existsSync(envPath));
+console.log('Keys:', {
+  Gemini: process.env.GEMINI_API_KEY ? '***' + process.env.GEMINI_API_KEY.slice(-4) : 'MISSING',
+  MongoDB: process.env.MONGO_URI ? '***' + process.env.MONGO_URI.slice(-4) : 'MISSING'
+});
+const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db');
 const productRoutes = require('./routes/products');
 const cartRoutes = require('./routes/cartRoutes');
 // const checkoutRoutes = require('./routes/checkoutRoutes');
 const PORT = process.env.PORT || 5000;
-const path = require('path');
+
 const app = express();
 const fs = require('fs');
+const geminiRoutes = require("./routes/geminiRoutes");
 
 // 1. Create upload directory
 const uploadDir = path.join(__dirname, 'uploads/images');
@@ -19,7 +30,6 @@ if (!fs.existsSync(uploadDir)) {
   console.log('Created uploads directory:', uploadDir);
 }
 
-dotenv.config();
 connectDB();
 
 // 2. CORS configuration
@@ -42,12 +52,17 @@ app.use('/api/orders', require('./routes/orderRoutes'));
 // 4. Static file serving (FIXED)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+app.use("/api/gemini", geminiRoutes);
 
-// 5. Remove redundant route configurations
-// Remove these lines:
-// app.use('/uploads', express.static('uploads'));
-// app.use('/api/upload', require('./routes/products'));
-// app.use('/uploads/images', express.static(path.join(__dirname, 'uploads/images')));
+app.get('/api/test-gemini', async (req, res) => {
+  try {
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    const result = await model.generateContent("Hello");
+    res.send(result.response.text());
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT} 🚀`);

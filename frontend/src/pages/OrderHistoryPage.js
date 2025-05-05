@@ -95,7 +95,7 @@ const handleCancelOrder = async (orderId) => {
       {orders.length === 0 ? (
         <div className="no-orders">
           <p>You haven't placed any orders yet.</p>
-          <button onClick={() => navigate('/shop')}>Start Shopping</button>
+          <button onClick={() => navigate('/map')}>Start Exploring Crafts</button>
         </div>
       ) : (
         <div className="orders-list">

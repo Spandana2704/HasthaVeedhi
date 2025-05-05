@@ -105,6 +105,7 @@ const ArtisanMarketMap = () => {
                 <Link to="/map">Home</Link>
                 <Link to="/about">About</Link>
                 <Link to="/wishlist">Wishlist</Link>
+                <button className="gift" onClick={() => navigate('/gift-assistant')}>Gift Assistant</button>
                 <Link to="/cart">My Cart</Link>
                 <Link to="/orders">My Orders</Link>
                     <button className="logout-btn" onClick={handleLogout}>Logout</button>

@@ -24,7 +24,7 @@ exports.updateProduct = async (req, res) => {
         const product = new Product({
           ...req.body,
           sellerId: req.user.id,
-          imageUrl: req.body.imageUrl.replace('http://localhost:5000', '') // Store relative path
+          imageUrl: req.body.imageUrl.startsWith('/uploads') ? req.body.imageUrl : `/uploads/images/${req.body.imageUrl}` // Store relative path
         });
         
         await product.validate(); // Explicit validation

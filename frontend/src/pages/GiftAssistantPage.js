@@ -1,31 +1,60 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/GiftAssistant.css';
 
 const GiftAssistantPage = () => {
-  const [occasion, setOccasion] = useState('');
+  const [messages, setMessages] = useState([
+    { text: "Hello! I'm your gift assistant. How can I help you today? Ask me about gift recommendations or craft details.", isBot: true }
+  ]);
+  const [inputValue, setInputValue] = useState('');
   const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef(null);
   const navigate = useNavigate();
 
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   useEffect(() => {
-    const fetchSuggestions = async () => {
-      if (!occasion) {
-        setProducts([]);
-        return;
+    scrollToBottom();
+  }, [messages]);
+
+  const handleSendMessage = async (e) => {
+    e.preventDefault();
+    if (!inputValue.trim()) return;
+
+    const userMessage = { text: inputValue, isBot: false };
+    setMessages(prev => [...prev, userMessage]);
+    setInputValue('');
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('http://localhost:5000/api/gemini/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: inputValue })
+      });
+
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to get response");
       }
 
-      try {
-        const res = await fetch(`http://localhost:5000/api/products/gift-assistant/${occasion}`);
-        if (!res.ok) throw new Error(`Server responded with ${res.status}`);
-        const data = await res.json();
-        setProducts(data);
-      } catch (err) {
-        console.error('Error fetching gift suggestions:', err);
-      }
-    };
-
-    fetchSuggestions();
-  }, [occasion]);
+      setMessages(prev => [...prev, { text: data.reply, isBot: true }]);
+      setProducts(data.products || []);
+      
+    } catch (err) {
+      console.error('Chat Error:', err);
+      setMessages(prev => [...prev, { 
+        text: err.message || "Sorry, I'm having trouble. Please try again later.", 
+        isBot: true 
+      }]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleAddToCart = async (productId) => {
     const token = localStorage.getItem('token');
@@ -75,71 +104,109 @@ const GiftAssistantPage = () => {
   };
 
   return (
-    <div className="gift-assistant-page">
-      {/* Navbar */}
-      <header className="gift-assistant-navbar">
-        <nav>
+    <div className="assistant-container">
+      <header className="assistant-header">
+        <nav className="assistant-nav">
           <button onClick={() => navigate('/map')}>Home</button>
           <button onClick={() => navigate('/wishlist')}>Wishlist</button>
           <button onClick={() => navigate('/orders')}>My Orders</button>
           <button onClick={() => navigate('/cart')}>My Cart</button>
-          <button onClick={() => navigate('/auth')} className="logout">Logout</button>
+          <button 
+            onClick={() => navigate('/auth')} 
+            className="logout-btn"
+          >
+            Logout
+          </button>
         </nav>
       </header>
 
-      <div className="gift-assistant-header">
+      <div className="assistant-title">
         <h1>🎁 Gift Assistant</h1>
-        <p>Select an occasion to see gift ideas</p>
+        <p>Ask me for gift recommendations or craft information</p>
       </div>
 
-      <label htmlFor="occasion-select" className="gift-assistant-label">Choose an Occasion:</label>
-      <select
-        id="occasion-select"
-        value={occasion}
-        onChange={(e) => setOccasion(e.target.value)}
-        className="gift-assistant-select"
-      >
-        <option value="">-- Select --</option>
-        <option value="wedding">Wedding</option>
-        <option value="birthday">Birthday</option>
-        <option value="housewarming">Housewarming</option>
-        <option value="babyShower">Baby Shower</option>
-        <option value="engagement">Engagement</option>
-        <option value="retirement">Retirement</option>
-      </select>
-
-      <div className="gift-assistant-products-grid">
-        {products.map((product) => (
-          <div key={product._id} className="gift-assistant-product-card">
-            <img
-              src={product.imageUrl ? `http://localhost:5000${product.imageUrl}` : '/fallback-image.jpg'}
-              alt={product.name}
-            />
-            <h3>{product.name}</h3>
-            <p>{product.craft}</p>
-            <p>₹{product.price}</p>
-            <p className={product.availability ? 'gift-assistant-in-stock' : 'gift-assistant-out-of-stock'}>
-              {product.availability ? 'In Stock' : 'Out of Stock'}
-            </p>
-
-            <div className="gift-assistant-product-actions">
-              <button
-                className="gift-assistant-buy-now"
-                onClick={() => handleBuyNow(product)}
-                disabled={!product.availability}
+      <div className="assistant-layout">
+        {/* Chat Section */}
+        <div className="chat-section">
+          <div className="chat-messages">
+            {messages.map((message, index) => (
+              <div 
+                key={index} 
+                className={`message ${message.isBot ? 'bot' : 'user'}`}
               >
-                Buy Now
-              </button>
-              <button
-                className="gift-assistant-add-to-cart"
-                onClick={() => handleAddToCart(product._id)}
-                disabled={!product.availability}
-              >
-                Add to Cart
-              </button>
-            </div>
+                {message.text}
+              </div>
+            ))}
+            {isLoading && (
+              <div className="message bot">
+                <div className="typing">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
           </div>
-        ))}
+          
+          <form onSubmit={handleSendMessage} className="chat-input">
+            <input
+              type="text"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              placeholder="Type your question here..."
+              disabled={isLoading}
+            />
+            <button type="submit" disabled={isLoading}>
+              {isLoading ? '...' : 'Send'}
+            </button>
+          </form>
+        </div>
+
+        {/* Products Section */}
+        <div className="products-section">
+          {products.length > 0 ? (
+            <>
+              <h3>Recommended Products</h3>
+              <div className="products-grid">
+                {products.map(product => (
+                  <div key={product._id} className="product-card">
+                    <img 
+                      src={product.imageUrl || '/placeholder.jpg'} 
+                      alt={product.name} 
+                    />
+                    <div className="product-info">
+                      <h4>{product.name}</h4>
+                      <p className="craft">{product.craft}</p>
+                      <p className="price">₹{product.price}</p>
+                      <p className={`stock ${product.availability ? 'in' : 'out'}`}>
+                        {product.availability ? 'In Stock' : 'Out of Stock'}
+                      </p>
+                      <div className="actions">
+                        <button 
+                          onClick={() => handleBuyNow(product)}
+                          disabled={!product.availability}
+                        >
+                          Buy Now
+                        </button>
+                        <button 
+                          onClick={() => handleAddToCart(product._id)}
+                          disabled={!product.availability}
+                        >
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          ) : (
+            <div className="empty-state">
+              <p>Ask about products to see recommendations here</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

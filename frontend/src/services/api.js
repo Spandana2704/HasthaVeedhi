@@ -89,3 +89,11 @@ export const refreshToken = async () => {
     throw error;
   }
 };
+export const askGemini = async (prompt) => {
+  const response = await fetch("/api/gemini/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ prompt }),
+  });
+  return response.json();
+};
