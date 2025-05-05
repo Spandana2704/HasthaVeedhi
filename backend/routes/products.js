@@ -92,4 +92,52 @@ router.post('/wishlist/add', protect, productController.addToWishlist);
 router.post('/wishlist/remove', protect, productController.removeFromWishlist);
 router.get('/wishlist', protect, productController.getWishlist);
 
+const occasionMap = {
+  wedding: [
+    "Ajrakh Block Printing", "Banarasi Silk Sarees", "Bandhani", "Chanderi Sarees",
+    "Dharmavaram Silk Sarees", "Gadwal Sarees", "Gollabhama Sarees", "Kantha Stitch",
+    "Maheshwari Sarees", "Mangalagiri Sarees", "Muga Silk Weaving", "Pochampally sarees",
+    "Uppada Jamdani Sarees", "Venkatagiri Sarees", "Pashmina Shawls", "Naga Shawls"
+  ],
+  birthday: [
+    "Kondapalli Toys", "Blue Pottery", "Chamba Rumal", "Chikankari", "Godna Art",
+    "Madhubani Painting", "Phad Painting", "Phulkari Embroidery", "Shell Craft",
+    "Terracotta Craft", "Warli Painting"
+  ],
+  housewarming: [
+    "Aranmula Kannadi", "Bastar Iron Craft", "Coir Products", "Kondagaon", "Nirmal Paintings",
+    "Pembarthi Brassware", "Risa and Rignai Weaving", "Tanjore Paintings", "Thangka Paintings",
+    "Pattachitra", "Manipuri Dance Costumes", "Apatani Weaving"
+  ],
+  babyShower: [
+    "Kondapalli Toys", "Channapatna Toys", "Madhubani Painting", "Warli Painting", 
+    "Phulkari Embroidery", "Handmade Baby Blankets", "Tanjore Paintings", "Wooden Rocking Horses"
+  ],
+  engagement: [
+    "Diamond Jewellery", "Gold Plated Jewellery", "Madhubani Art", "Handcrafted Gifts",
+    "Phad Painting", "Blue Pottery", "Brassware", "Warli Art"
+  ],
+  retirement: [
+    "Wooden Carvings", "Brass Statues", "Tanjore Paintings", "Madhubani Painting", 
+    "Personalized Handicrafts", "Terracotta Items", "Handwoven Scarves", "Stone Craft"
+  ]
+};
+
+router.get('/gift-assistant/:occasion', async (req, res) => {
+  try {
+    const { occasion } = req.params;
+    const crafts = occasionMap[occasion.toLowerCase()];
+
+    if (!crafts) {
+      return res.status(400).json({ error: 'Invalid occasion' });
+    }
+
+    const products = await Product.find({ craft: { $in: crafts } });
+    res.json(products);
+  } catch (error) {
+    console.error('Gift Assistant Error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 module.exports = router;

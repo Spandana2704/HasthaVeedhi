@@ -180,6 +180,7 @@ const ShopPage = () => {
           <button onClick={() => navigate('/wishlist')}>Wishlist</button>
           <button onClick={() => navigate('/orders')}>My Orders</button>
           <button onClick={() => navigate('/cart')}>My Cart</button>
+          <button onClick={() => navigate('/gift-assistant')}>Gift Assistant</button>
           <button onClick={() => navigate('/auth')} className="logout">Logout</button>
         </nav>
       </header>

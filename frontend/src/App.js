@@ -14,6 +14,7 @@ import CheckoutPage from './pages/CheckoutPage';
 import OrderConfirmation from './pages/OrderConfirmation';
 import OrderHistoryPage from './pages/OrderHistoryPage';
 import OrderDetailsPage from './pages/OrderDetailsPage';
+import GiftAssistantPage from './pages/GiftAssistantPage';
 
 
 const App = () => {
@@ -34,6 +35,7 @@ const App = () => {
       <Route path="/order-confirmation" element={<OrderConfirmation />} />
       <Route path="/orders" element={<OrderHistoryPage />} />
       <Route path="/orders/:id" element={<OrderDetailsPage />} />
+      <Route path="/gift-assistant" element={<GiftAssistantPage />} />
     </Routes>
     </CartProvider>
   );
