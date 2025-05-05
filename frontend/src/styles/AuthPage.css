@@ -7,17 +7,12 @@
 
 html, body {
   height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f5f7fa;
 }
 
 /* Container */
 .auth-container {
-  background-image: url('https://res.cloudinary.com/dvdvz4lko/image/upload/v1745168631/image_vaog11.jpg');
-  background-size: cover;
-  background-position: center;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -25,27 +20,35 @@ html, body {
   min-height: 100vh;
   padding: 20px;
   width: 100%;
+  background: 
+              url('https://res.cloudinary.com/dvdvz4lko/image/upload/v1745168631/image_vaog11.jpg');
+  background-size: cover;
+  background-position: center;
+  background-blend-mode: overlay;
 }
 
 /* Form styling */
 form {
-  background-color: transparent;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  background-color:transparent;
+  padding: 2.5rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
   width: 100%;
-  max-width: 420px;
+  max-width: 450px;
   text-align: center;
-  transition: transform 0.3s ease-in-out;
+  transition: all 0.3s ease;
+  backdrop-filter: none;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 /* Title Styling (Login / Register) */
 .auth-container h2 {
   margin-bottom: 1.5rem;
-  font-size: 32px;
+  font-size: 2.2rem;
   color: #ffffff;
   font-weight: 700;
   text-align: center;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 /* Input Fields */
@@ -53,18 +56,20 @@ input,
 select {
   width: 100%;
   padding: 1rem;
-  margin: 0.5rem 0;
-  border-radius: 6px;
-  border: 1px solid #dcdfe6;
+  margin: 0.75rem 0;
+  border-radius: 8px;
+  border: 1px solid #e0e3e7;
   font-size: 16px;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  transition: all 0.3s ease;
+  background-color: rgba(255, 255, 255, 0.9);
 }
 
 input:focus,
 select:focus {
   outline: none;
-  border-color: #6c5ce7;
-  box-shadow: 0 0 5px rgba(108, 92, 237, 0.4);
+  border-color: #5a67d8;
+  box-shadow: 0 0 0 3px rgba(90, 103, 216, 0.2);
+  background-color: white;
 }
 
 /* Password Field */
@@ -75,79 +80,95 @@ select:focus {
 }
 
 .password-field input {
-  padding-right: 3rem;
+  padding-right: 3.5rem;
 }
 
 .show-password-btn {
   position: absolute;
-  right: 10px;
+  right: 12px;
   background: none;
   border: none;
-  color: #007bff;
+  color: #5a67d8;
   cursor: pointer;
-  font-size: 0.9em;
+  font-size: 0.85em;
   padding: 0.5rem;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.show-password-btn:hover {
+  color: #434190;
 }
 
 /* Buttons */
 .submit-btn {
   width: 100%;
   padding: 1rem;
-  margin: 1rem 0 0.5rem;
-  background: linear-gradient(135deg, #1e3c72, #2a5298);
+  margin: 1.5rem 0 1rem;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .toggle-btn {
   width: auto;
-  padding: 0.75rem;
-  margin-top: 1rem;
-  background: none;
-  color: #964c27;
-  font-weight:700;
-  border: 1px solid #964c27;
-  border-radius: 6px;
-  font-size: 18px;
+  padding: 0.75rem 1.5rem;
+  margin-top: 1.5rem;
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  font-weight: 600;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  font-size: 16px;
   cursor: pointer;
   transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
 }
 
 /* Button Effects */
 .submit-btn:hover {
-  background: linear-gradient(135deg, #985f2a, #1e3c72);
+  background: linear-gradient(135deg, #4338ca, #6d28d9);
   transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(30, 60, 114, 0.3);
+  box-shadow: 0 7px 14px rgba(0, 0, 0, 0.15);
 }
 
 .submit-btn:active {
-  transform: scale(0.98);
+  transform: translateY(0);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .toggle-btn:hover {
-  background-color: #7c4712;
-  text-decoration:dotted;
-  border: 1px solid #964c27;
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+.toggle-btn:active {
+  transform: translateY(0);
 }
 
 /* Password Requirements */
 .password-requirements {
-  margin: 1rem 0;
-  padding: 1rem;
-  background-color: #f8f9fa;
-  border-radius: 6px;
+  margin: 1.25rem 0;
+  padding: 1.25rem;
+  background-color: rgba(248, 249, 250, 0.8);
+  border-radius: 8px;
   text-align: left;
+  border: 1px solid #e0e3e7;
 }
 
 .password-requirements h5 {
-  margin-bottom: 0.5rem;
-  color: #2c3e50;
-  font-size: 14px;
+  margin-bottom: 0.75rem;
+  color: #2d3748;
+  font-size: 15px;
+  font-weight: 600;
 }
 
 .password-requirements ul {
@@ -156,71 +177,84 @@ select:focus {
 }
 
 .password-requirements li {
-  margin-bottom: 0.25rem;
-  font-size: 13px;
+  margin-bottom: 0.5rem;
+  font-size: 14px;
   position: relative;
-  padding-left: 1.25rem;
+  padding-left: 1.5rem;
 }
 
 .password-requirements li:before {
-  content: "•";
+  content: "";
   position: absolute;
   left: 0;
+  top: 6px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: currentColor;
 }
 
 .password-requirements .valid {
-  color: #27ae60;
+  color: #38a169;
 }
 
 .password-requirements .invalid {
-  color: #e74c3c;
+  color: #e53e3e;
 }
 
 /* Messages */
 .error-message {
-  color: #e74c3c;
-  margin-top: 1rem;
-  font-size: 14px;
+  color: #e53e3e;
+  margin-top: 1.25rem;
+  font-size: 15px;
   font-weight: 500;
-  padding: 0.5rem;
-  background-color: #fdecea;
-  border-radius: 4px;
+  padding: 0.75rem;
+  background-color: rgba(254, 226, 226, 0.8);
+  border-radius: 8px;
+  border-left: 4px solid #e53e3e;
 }
 
 .success-message {
-  color: #27ae60;
-  margin-top: 1rem;
-  font-size: 14px;
+  color: #38a169;
+  margin-top: 1.25rem;
+  font-size: 15px;
   font-weight: 500;
-  padding: 0.5rem;
-  background-color: #e8f5e9;
-  border-radius: 4px;
+  padding: 0.75rem;
+  background-color: rgba(198, 246, 213, 0.8);
+  border-radius: 8px;
+  border-left: 4px solid #38a169;
 }
 
 /* Resend Container */
 .resend-container {
-  margin-top: 1rem;
+  margin-top: 1.25rem;
   text-align: center;
 }
 
 .resend-container p {
-  color: #7f8c8d;
-  margin-bottom: 0.5rem;
-  font-size: 14px;
+  color: #4a5568;
+  margin-bottom: 0.75rem;
+  font-size: 15px;
 }
 
 .resend-btn {
   background: none;
   border: none;
-  color: #3498db;
+  color: #4299e1;
   cursor: pointer;
   text-decoration: underline;
-  font-size: 14px;
+  font-size: 15px;
   padding: 0.25rem;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.resend-btn:hover {
+  color: #3182ce;
 }
 
 .resend-btn:disabled {
-  color: #bdc3c7;
+  color: #a0aec0;
   text-decoration: none;
   cursor: not-allowed;
 }
@@ -228,7 +262,7 @@ select:focus {
 /* Role Selector */
 select {
   appearance: none;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234a5568' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
   background-repeat: no-repeat;
   background-position: right 1rem center;
   background-size: 1em;
@@ -237,12 +271,13 @@ select {
 /* Responsive Design */
 @media (max-width: 600px) {
   form {
-    padding: 1.5rem;
-    width: 90%;
+    padding: 2rem;
+    width: 95%;
+    max-width: none;
   }
 
   .auth-container h2 {
-    font-size: 26px;
+    font-size: 2rem;
   }
 
   input,
@@ -251,5 +286,9 @@ select {
   .toggle-btn {
     font-size: 15px;
     padding: 0.9rem;
+  }
+  
+  .password-requirements {
+    padding: 1rem;
   }
 }

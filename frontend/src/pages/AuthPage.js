@@ -129,7 +129,7 @@ const AuthPage = () => {
 
   return (
     <div className="auth-container">
-      <h2>{isRegister ? 'Register' : 'Login'}</h2>
+      <h2>Welcome To HasthaVeedhi</h2>
       <form onSubmit={handleSubmit}>
         {isRegister && (
           <>
